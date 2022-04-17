@@ -12,7 +12,7 @@ Datos de conexión:
 * Puerto: 3306
 
 La siguiente imagen muestra el diseño de base de datos usado:
-![Image text](https://www.dropbox.com/s/e7hwsb9mebtwoih/1.png?dl=0)
+![Image text](https://github.com/Blorks/prueba-tecnica-reby/blob/develop/cmd/server/bd_design.png)
 
 ### Aclaraciones respecto al diseño de la BBDD
 He intentando mantener el diseño lo más básico posible para no complicar demasiado la prueba:
