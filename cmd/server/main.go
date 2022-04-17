@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
-	"reby/app"
+	app "reby/app/controllers"
 )
 
 const httpPort = 8080
