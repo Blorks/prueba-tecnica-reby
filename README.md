@@ -10,6 +10,7 @@ Datos de conexión:
 * Contraseña: reby
 * IP: 34.140.134.87
 * Puerto: 3306
+* Nombre de la BD: prueba-tecnica-reby
 
 La siguiente imagen muestra el diseño de base de datos usado:
 ![Image text](https://github.com/Blorks/prueba-tecnica-reby/blob/develop/cmd/server/bd_design_v2.png)
