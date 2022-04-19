@@ -4,7 +4,7 @@ import (
 	"reby/app/models"
 )
 
-func GetVehicle(idVehicle int64) models.Vehicle {
+func GetVehicle(idVehicle int) models.Vehicle {
 	vehicle := models.Vehicle{}
 
 	Database.First(&vehicle, idVehicle)

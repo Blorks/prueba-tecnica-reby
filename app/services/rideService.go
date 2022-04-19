@@ -8,16 +8,16 @@ import (
 	"time"
 )
 
-const unlock_price int64 = 100
-const minute_price int64 = 18
+const unlock_price int = 100
+const minute_price int = 18
 
-func calculateCost(ride models.Ride) int64 {
-	if ride.GetFinished().IsZero() {
+func calculateCost(ride models.Ride) int {
+	if ride.Finished.IsZero() {
 		panic("It is not possible to calculate the cost of a ride that has not yet finished")
 	}
 
-	diff := ride.GetFinished().Sub(ride.GetCreated())
-	minutes := int64(math.Ceil(diff.Minutes()))
+	diff := ride.Finished.Sub(ride.Created)
+	minutes := int(math.Ceil(diff.Minutes()))
 
 	return unlock_price + minutes*minute_price
 }
@@ -45,16 +45,16 @@ func InitRide(rideDto dtos.RideDtoPost) dtos.RideDtoGet {
 	return response
 }
 
-func FinishRide(idRide int64) dtos.RideDtoGetCost {
+func FinishRide(idRide int) dtos.RideDtoGetCost {
 	ride := repositories.GetRide(idRide)
 
 	if !ride.CheckRideNotFinished() {
 		panic("The ride that is trying to end is already over")
 	}
 
-	ride.SetFinished(time.Now())
+	ride.Finished = time.Now()
 
-	repositories.SaveRide(ride)
+	ride = repositories.SaveRide(ride)
 
 	response := dtos.RideDtoGetCost{}
 	response.Constructor(ride, calculateCost(ride))
