@@ -23,9 +23,10 @@ He intentando mantener el diseño lo más básico posible para no complicar dema
 * He añadido un atributo "state" a la tabla "Vehicles" porque entiendo que no se puede elegir un vehiculo para un trayecto que está siendo usado para otro trayecto. Esta columna sólo puede recibir los valores "FREE" e "IN_USE" para simular esa condición
 * He creado una tabla para guardar las configuraciones de los "Rides", de forma que puedan ser modificadas sin tener que cambiar el microservicio. Por simplicidad, esta cuarta tabla no la he relacionado con "Rides", dando por sentado que todos los "Rides" tienen la misma configuración
 
-## Servidor
-El servidor ha sido desarrollado en Go. He elegido una estructura por capas para mantener cada "función" del servidor totalmente aislada. Las capas creadas son las siguientes:
+## Microservicio
+El microservicio ha sido desarrollado en Go. He elegido una estructura por capas para mantener cada "función" del totalmente aislada. Las capas creadas son las siguientes:
 * Capa models: Aquí se encuentran todas las entidades del microservicio (una por cada tabla de la BBDD)
 * Capa services: Aquí se encuentra la lógica de negocio del microservicio
 * Capa controllers: Aquí se encuentran los puntos de entrada del microservicio (endpoints)
 * Capa repositories: Aquí se encuentra el ORM usado para controlar las consultas a la BBDD (He usado GORN)
+* Capa dtos: Aquí se encuentran las entidades usadas para aplicar el patrón DTO para desvincular la información requerida por el cliente y las entidades de la base de datos

@@ -56,3 +56,7 @@ func (ride *Ride) GetVehicle() Vehicle {
 func (ride *Ride) SetVehicle(vehicle Vehicle) {
 	ride.vehicle = vehicle
 }
+
+func (ride *Ride) CheckRideNotFinished() bool {
+	return ride.finished.IsZero()
+}

@@ -44,3 +44,7 @@ func (user *User) GetBalance() int64 {
 func (user *User) SetBalance(balance int64) {
 	user.balance = balance
 }
+
+func (user *User) CheckUserBalance(balance int64) bool {
+	return user.balance > balance
+}
