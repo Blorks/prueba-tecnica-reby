@@ -30,3 +30,8 @@ El microservicio ha sido desarrollado en Go. He elegido una estructura por capas
 * Capa controllers: Aquí se encuentran los puntos de entrada del microservicio (endpoints)
 * Capa repositories: Aquí se encuentra el ORM usado para controlar las consultas a la BBDD (He usado GORN)
 * Capa dtos: Aquí se encuentran las entidades usadas para aplicar el patrón DTO para desvincular la información requerida por el cliente y las entidades de la base de datos
+
+## Problemas y soluciones
+Me he encontrado con un problema a la hora de gestionar las fechas. He visto que Go tiene una función IsZero del tipo time.Time que da un valor por defecto a una fecha (0000-00-00 00:00:00). He pensado en usar esta función para comprobar si un "Ride" había terminado o no, pero MySQL toma este valor como un dato inválido y no permite insertarlo.
+
+Para solucionarlo he inicializado el valor de Created y Finished de la entidad "Ride" al mismo valor, y he tomado como que si esas 2 fechas son iguales, el "Ride" aun no ha terminado. Se que no es la mejor solución pero no quería complicar demasiado la prueba para algo que no es un requisito directo

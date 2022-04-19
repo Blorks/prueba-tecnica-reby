@@ -3,60 +3,32 @@ package models
 import "time"
 
 type Ride struct {
-	idRide   int64
-	created  time.Time
-	finished time.Time
+	IdRide   int `gorm:"primaryKey"`
+	Created  time.Time
+	Finished time.Time
 
-	user    User
-	vehicle Vehicle
+	IdUser int
+	User   User `gorm:"foreignKey:IdUser"`
+
+	IdVehicle int
+	Vehicle   Vehicle `gorm:"foreignKey:IdVehicle"`
 }
 
 func (ride *Ride) Constructor(user User, vehicle Vehicle) {
-	ride.created = time.Now()
-	ride.user = user
-	ride.vehicle = vehicle
+	ride.Created = time.Now()
+	ride.Finished = ride.Created
+
+	ride.AppendAssociations(user, vehicle)
 }
 
-func (ride *Ride) GetIdRide() int64 {
-	return ride.idRide
-}
+func (ride *Ride) AppendAssociations(user User, vehicle Vehicle) {
+	ride.IdUser = user.IdUser
+	ride.User = user
 
-func (ride *Ride) SetIdUser(idRide int64) {
-	ride.idRide = idRide
-}
-
-func (ride *Ride) GetCreated() time.Time {
-	return ride.created
-}
-
-func (ride *Ride) SetCreated(created time.Time) {
-	ride.created = created
-}
-
-func (ride *Ride) GetFinished() time.Time {
-	return ride.finished
-}
-
-func (ride *Ride) SetFinished(finished time.Time) {
-	ride.finished = finished
-}
-
-func (ride *Ride) GetUser() User {
-	return ride.user
-}
-
-func (ride *Ride) SetUser(user User) {
-	ride.user = user
-}
-
-func (ride *Ride) GetVehicle() Vehicle {
-	return ride.vehicle
-}
-
-func (ride *Ride) SetVehicle(vehicle Vehicle) {
-	ride.vehicle = vehicle
+	ride.IdVehicle = vehicle.IdVehicle
+	ride.Vehicle = vehicle
 }
 
 func (ride *Ride) CheckRideNotFinished() bool {
-	return ride.finished.IsZero()
+	return ride.Finished.Equal(ride.Created)
 }

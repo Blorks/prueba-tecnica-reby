@@ -2,18 +2,20 @@ package repositories
 
 import (
 	"reby/app/models"
+
+	"gorm.io/gorm/clause"
 )
 
-func GetRide(idRide int64) models.Ride {
+func GetRide(idRide int) models.Ride {
 	ride := models.Ride{}
 
-	Database.First(&ride, idRide)
+	Database.Find(&ride, idRide)
 
 	return ride
 }
 
 func SaveRide(ride models.Ride) models.Ride {
-	Database.Save(&ride)
+	Database.Omit(clause.Associations).Save(&ride)
 
 	return ride
 }
