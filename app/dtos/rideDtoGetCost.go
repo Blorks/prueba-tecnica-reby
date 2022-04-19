@@ -6,19 +6,16 @@ import (
 
 type RideDtoGetCost struct {
 	RideDtoGet
-	Cost int64 `json:"cost"`
+	Cost int `json:"cost"`
 }
 
-func (rideDTO *RideDtoGetCost) Constructor(ride models.Ride, cost int64) {
-	rideDTO.IdRide = ride.GetIdRide()
-	rideDTO.Created = ride.GetCreated()
-	rideDTO.Finished = ride.GetFinished()
+func (rideDTO *RideDtoGetCost) Constructor(ride models.Ride, cost int) {
+	rideDTO.IdRide = ride.IdRide
+	rideDTO.Created = ride.Created
+	rideDTO.Finished = ride.Finished
 
-	user := ride.GetUser()
-	rideDTO.IdUser = user.GetIdUser()
-
-	vehicle := ride.GetVehicle()
-	rideDTO.IdVehicle = vehicle.GetIdVehicle()
+	rideDTO.IdUser = ride.IdUser
+	rideDTO.IdVehicle = ride.IdVehicle
 
 	rideDTO.Cost = cost
 }

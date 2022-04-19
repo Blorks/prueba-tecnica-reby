@@ -6,20 +6,17 @@ import (
 )
 
 type RideDtoGet struct {
-	IdRide   int64     `json:"idRide"`
+	IdRide   int       `json:"idRide"`
 	Created  time.Time `json:"created"`
 	Finished time.Time `json:"finished"`
 	RideDto
 }
 
 func (rideDTO *RideDtoGet) Constructor(ride models.Ride) {
-	rideDTO.IdRide = ride.GetIdRide()
-	rideDTO.Created = ride.GetCreated()
-	rideDTO.Finished = ride.GetFinished()
+	rideDTO.IdRide = ride.IdRide
+	rideDTO.Created = ride.Created
+	rideDTO.Finished = ride.Finished
 
-	user := ride.GetUser()
-	rideDTO.IdUser = user.GetIdUser()
-
-	vehicle := ride.GetVehicle()
-	rideDTO.IdVehicle = vehicle.GetIdVehicle()
+	rideDTO.IdUser = ride.IdUser
+	rideDTO.IdVehicle = ride.IdVehicle
 }
