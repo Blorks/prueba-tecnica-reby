@@ -36,3 +36,7 @@ func (vehicle *Vehicle) GetState() enums.VehicleState {
 func (vehicle *Vehicle) SetState(state enums.VehicleState) {
 	vehicle.state = state
 }
+
+func (vehicle *Vehicle) CheckVehicleFree() bool {
+	return vehicle.state == enums.Free
+}
