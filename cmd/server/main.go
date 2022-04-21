@@ -1,26 +1,20 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"net/http"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-
-	app "reby/app/controllers"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
+const dsn = "reby:reby@tcp(34.140.134.87:3306)/prueba-tecnica-reby?charset=utf8mb4&parseTime=True&loc=Local"
 const httpPort = 8080
 
 func main() {
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
+	dbConn, _ := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
-	r.Post("/rides", app.RideStartHandler)
-	r.Post("/rides/{id}/finish", app.RideFinishHandler)
-
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", httpPort), r); err != http.ErrServerClosed && err != nil {
-		log.Fatalf("Error starting http server <%s>", err)
+	s := Server{
+		DBConn: dbConn,
+		Port:   httpPort,
 	}
+
+	s.Start()
 }
