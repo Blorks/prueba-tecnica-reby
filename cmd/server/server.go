@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"fmt"
@@ -33,7 +33,7 @@ func (s *Server) Start() {
 	r.Post("/rides", rideController.RideStartHandler)
 	r.Post("/rides/{id}/finish", rideController.RideFinishHandler)
 
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", httpPort), r); err != http.ErrServerClosed && err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", s.Port), r); err != http.ErrServerClosed && err != nil {
 		log.Fatalf("Error starting http server <%s>", err)
 	}
 }

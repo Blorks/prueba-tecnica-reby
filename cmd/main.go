@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"reby/cmd/server"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -11,10 +14,12 @@ const httpPort = 8080
 func main() {
 	dbConn, _ := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
-	s := Server{
+	s := server.Server{
 		DBConn: dbConn,
 		Port:   httpPort,
 	}
+
+	fmt.Println("Servidor levantado en el puerto:", s.Port)
 
 	s.Start()
 }
