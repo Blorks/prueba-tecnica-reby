@@ -1,58 +1,85 @@
 package ride
 
 import (
-	"os"
-	"reby/cmd/server"
-	"syscall"
+	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
+	"reby/app/dtos"
+	"reby/test/integration"
+	"strings"
 	"testing"
+	"time"
 
-	"github.com/golang-migrate/migrate"
-	"github.com/stretchr/testify/suite"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"github.com/stretchr/testify/assert"
 )
 
-const dsn = "root:toor@tcp(localhost:3333)/prueba-tecnica-reby?charset=utf8mb4&parseTime=True&loc=Local"
-const httpPort = 8080
+var serverConfig integration.ServerConfig
 
-type rideControllerTestSuite struct {
-	suite.Suite
-	dbConnectionStr string
-	port            int
-	dbConn          *gorm.DB
-	dbMigration     *migrate.Migrate
-}
-
-func RideControllerTestSuite(t *testing.T) {
-	suite.Run(t, &rideControllerTestSuite{})
-}
-
-func (s *rideControllerTestSuite) SetupSuite() {
-	s.port = httpPort
-	s.dbConnectionStr = dsn
-
-	s.dbConn, _ = gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	s.dbMigration, _ = migrate.New("file://../repositories/sql/migration", s.dbConnectionStr)
-
-	s.dbMigration.Up()
-
-	server := server.Server{
-		Port:   httpPort,
-		DBConn: s.dbConn,
+func Test_Init_Ride_Ok(t *testing.T) {
+	if !serverConfig.ServerUp {
+		serverConfig.SetupServer(false)
+	} else {
+		serverConfig.LoadSQLFiles(false)
 	}
 
-	go server.Start()
+	body := `{"idUser": 1, "idVehicle": 1}`
+	request, err := http.NewRequest("POST", "http://localhost:8080/rides", strings.NewReader(body))
+
+	before := time.Now()
+
+	response := serverConfig.ExecuteRequest(request)
+
+	after := time.Now()
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	assert.Equal(t, http.StatusCreated, response.Code)
+
+	responseByte, _ := io.ReadAll(response.Body)
+
+	var dtoResponse dtos.RideDtoGet
+	json.Unmarshal(responseByte, &dtoResponse)
+
+	assert.NotEmpty(t, dtoResponse.IdRide)
+	assert.True(t, dtoResponse.Created.After(before) && dtoResponse.Created.Before(after))
+	assert.Equal(t, dtoResponse.Created, dtoResponse.Finished)
+	assert.Equal(t, 1, dtoResponse.IdUser)
+	assert.Equal(t, 1, dtoResponse.IdVehicle)
 }
 
-func (s *rideControllerTestSuite) TearDownSuite() {
-	p, _ := os.FindProcess(syscall.Getpid())
-	p.Signal(syscall.SIGINT)
-}
+func Test_Finish_Ride_Ok(t *testing.T) {
+	if !serverConfig.ServerUp {
+		serverConfig.SetupServer(true)
+	} else {
+		serverConfig.LoadSQLFiles(true)
+	}
 
-func (s *rideControllerTestSuite) SetupTest() {
-	s.dbMigration.Up()
-}
+	request, err := http.NewRequest("POST", "http://localhost:8080/rides/1/finish", nil)
 
-func (s *rideControllerTestSuite) TearDownTest() {
-	s.dbMigration.Down()
+	before := time.Now()
+
+	response := serverConfig.ExecuteRequest(request)
+
+	after := time.Now()
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	assert.Equal(t, http.StatusOK, response.Code)
+
+	responseByte, _ := io.ReadAll(response.Body)
+
+	var dtoResponse dtos.RideDtoGetCost
+	json.Unmarshal(responseByte, &dtoResponse)
+
+	assert.Equal(t, 1, dtoResponse.IdRide)
+	assert.Equal(t, time.Date(2022, time.January, 1, 0, 0, 0, 0, time.Local), dtoResponse.Created)
+	assert.True(t, dtoResponse.Finished.After(before) && dtoResponse.Finished.Before(after))
+	assert.Equal(t, 1, dtoResponse.IdUser)
+	assert.Equal(t, 1, dtoResponse.IdVehicle)
+	assert.NotEmpty(t, dtoResponse.Cost)
 }
