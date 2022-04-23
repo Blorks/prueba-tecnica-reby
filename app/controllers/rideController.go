@@ -1,4 +1,4 @@
-package app
+package controllers
 
 import (
 	"encoding/json"
@@ -11,13 +11,22 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func RideStartHandler(w http.ResponseWriter, r *http.Request) {
+type RideController struct {
+	rideService services.RideService
+}
+
+func NewRideController(rideService services.RideService) *RideController {
+	return &RideController{rideService: rideService}
+}
+
+func (c *RideController) RideStartHandler(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Fprintln(w, err)
 		}
 	}()
 
+	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 
 	rideDto := dtos.RideDtoPost{}
@@ -26,14 +35,14 @@ func RideStartHandler(w http.ResponseWriter, r *http.Request) {
 	if err := decoder.Decode(&rideDto); err != nil {
 		fmt.Fprintln(w, http.StatusUnprocessableEntity)
 	} else {
-		rideDtoGet := services.InitRide(rideDto)
+		rideDtoGet := c.rideService.InitRide(rideDto)
 
 		response, _ := json.Marshal(rideDtoGet)
 		fmt.Fprintln(w, string(response))
 	}
 }
 
-func RideFinishHandler(w http.ResponseWriter, r *http.Request) {
+func (c *RideController) RideFinishHandler(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Fprintln(w, err)
@@ -45,7 +54,7 @@ func RideFinishHandler(w http.ResponseWriter, r *http.Request) {
 	stringId := chi.URLParam(r, "id")
 	id, _ := strconv.Atoi(stringId)
 
-	rideDtoGetCost := services.FinishRide(id)
+	rideDtoGetCost := c.rideService.FinishRide(id)
 
 	response, _ := json.Marshal(rideDtoGetCost)
 	fmt.Fprintln(w, string(response))
