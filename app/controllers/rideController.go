@@ -26,6 +26,7 @@ func (c *RideController) RideStartHandler(w http.ResponseWriter, r *http.Request
 		}
 	}()
 
+	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
 
 	rideDto := dtos.RideDtoPost{}

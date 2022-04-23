@@ -16,6 +16,7 @@ import (
 type Server struct {
 	Port   int
 	DBConn *gorm.DB
+	Router *chi.Mux
 }
 
 func (s *Server) Start() {
@@ -32,6 +33,8 @@ func (s *Server) Start() {
 
 	r.Post("/rides", rideController.RideStartHandler)
 	r.Post("/rides/{id}/finish", rideController.RideFinishHandler)
+
+	s.Router = r
 
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", s.Port), r); err != http.ErrServerClosed && err != nil {
 		log.Fatalf("Error starting http server <%s>", err)
