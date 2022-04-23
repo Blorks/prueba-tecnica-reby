@@ -2,12 +2,24 @@ package repositories
 
 import (
 	"reby/app/models"
+
+	"gorm.io/gorm"
 )
 
-func GetVehicle(idVehicle int) models.Vehicle {
-	vehicle := models.Vehicle{}
+type VehicleRepository struct {
+	conn *gorm.DB
+}
 
-	Database.First(&vehicle, idVehicle)
+func NewVehicleRepository(conn *gorm.DB) *VehicleRepository {
+	return &VehicleRepository{conn: conn}
+}
 
-	return vehicle
+func (r *VehicleRepository) GetVehicle(idVehicle int) (models.Vehicle, error) {
+	var vehicle models.Vehicle
+
+	if err := r.conn.Find(&vehicle, idVehicle).Error; err != nil {
+		return models.Vehicle{}, err
+	}
+
+	return vehicle, nil
 }

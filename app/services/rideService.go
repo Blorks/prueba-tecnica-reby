@@ -11,6 +11,16 @@ import (
 const unlock_price int = 100
 const minute_price int = 18
 
+type RideService struct {
+	userRepository    repositories.UserRepository
+	vehicleRepository repositories.VehicleRepository
+	rideRepository    repositories.RideRepository
+}
+
+func NewRideService(userRepository repositories.UserRepository, vehicleRepository repositories.VehicleRepository, rideRepository repositories.RideRepository) *RideService {
+	return &RideService{userRepository: userRepository, vehicleRepository: vehicleRepository, rideRepository: rideRepository}
+}
+
 func calculateCost(ride models.Ride) int {
 	if ride.Finished.IsZero() {
 		panic("It is not possible to calculate the cost of a ride that has not yet finished")
@@ -22,9 +32,9 @@ func calculateCost(ride models.Ride) int {
 	return unlock_price + minutes*minute_price
 }
 
-func InitRide(rideDto dtos.RideDtoPost) dtos.RideDtoGet {
-	user := repositories.GetUser(rideDto.IdUser)
-	vehicle := repositories.GetVehicle(rideDto.IdVehicle)
+func (s *RideService) InitRide(rideDto dtos.RideDtoPost) dtos.RideDtoGet {
+	user, _ := s.userRepository.GetUser(rideDto.IdUser)
+	vehicle, _ := s.vehicleRepository.GetVehicle(rideDto.IdVehicle)
 
 	if !user.CheckUserBalance(unlock_price) {
 		panic("The user's balance is too low to start the ride")
@@ -37,7 +47,7 @@ func InitRide(rideDto dtos.RideDtoPost) dtos.RideDtoGet {
 	ride := models.Ride{}
 	ride.Constructor(user, vehicle)
 
-	ride = repositories.SaveRide(ride)
+	ride = s.rideRepository.SaveRide(ride)
 
 	response := dtos.RideDtoGet{}
 	response.Constructor(ride)
@@ -45,8 +55,8 @@ func InitRide(rideDto dtos.RideDtoPost) dtos.RideDtoGet {
 	return response
 }
 
-func FinishRide(idRide int) dtos.RideDtoGetCost {
-	ride := repositories.GetRide(idRide)
+func (s *RideService) FinishRide(idRide int) dtos.RideDtoGetCost {
+	ride, _ := s.rideRepository.GetRide(idRide)
 
 	if !ride.CheckRideNotFinished() {
 		panic("The ride that is trying to end is already over")
@@ -54,7 +64,7 @@ func FinishRide(idRide int) dtos.RideDtoGetCost {
 
 	ride.Finished = time.Now()
 
-	ride = repositories.SaveRide(ride)
+	ride = s.rideRepository.SaveRide(ride)
 
 	response := dtos.RideDtoGetCost{}
 	response.Constructor(ride, calculateCost(ride))
