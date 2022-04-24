@@ -1,0 +1,1 @@
+UPDATE rides SET finished = DATE_ADD(created , INTERVAL 1 DAY)
