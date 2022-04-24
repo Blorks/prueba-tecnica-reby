@@ -26,7 +26,7 @@ type ServerConfig struct {
 	ServerUp bool
 }
 
-func (s *ServerConfig) SetupServer(includeRide bool) {
+func (s *ServerConfig) SetupServer(includeRide bool, setUserBalanceZero bool, setVehicleStateInUse bool, setRideFinished bool) {
 	dbConn, _ := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
 	server := server.Server{
@@ -37,7 +37,7 @@ func (s *ServerConfig) SetupServer(includeRide bool) {
 	s.ServerUp = true
 	s.Server = &server
 
-	s.LoadSQLFiles(includeRide)
+	s.LoadSQLFiles(includeRide, setUserBalanceZero, setVehicleStateInUse, setRideFinished)
 
 	fmt.Println("Servidor levantado en el puerto:", server.Port)
 
@@ -46,13 +46,25 @@ func (s *ServerConfig) SetupServer(includeRide bool) {
 	time.Sleep(1 * time.Millisecond) //Wait for the server
 }
 
-func (s *ServerConfig) LoadSQLFiles(includeRide bool) {
+func (s *ServerConfig) LoadSQLFiles(includeRide bool, setUserBalanceZero bool, setVehicleStateInUse bool, setRideFinished bool) {
 	LoadSQLFile(s.Server.DBConn, filepath.Join(basepath, "database_drop.sql"))
 	LoadSQLFile(s.Server.DBConn, filepath.Join(basepath, "database_create.sql"))
 	LoadSQLFile(s.Server.DBConn, filepath.Join(basepath, "data_create.sql"))
 
 	if includeRide {
 		LoadSQLFile(s.Server.DBConn, filepath.Join(basepath, "data_add_ride.sql"))
+
+		if setRideFinished {
+			LoadSQLFile(s.Server.DBConn, filepath.Join(basepath, "data_ride_finished.sql"))
+		}
+	}
+
+	if setUserBalanceZero {
+		LoadSQLFile(s.Server.DBConn, filepath.Join(basepath, "data_user_balance_zero.sql"))
+	}
+
+	if setVehicleStateInUse {
+		LoadSQLFile(s.Server.DBConn, filepath.Join(basepath, "data_vehicle_state_in_use.sql"))
 	}
 }
 
