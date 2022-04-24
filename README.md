@@ -77,7 +77,6 @@ La conexión a esta base de datos es la siguiente:
 
 docker-compose:
 <code>
-# Use root/example as user/password credentials
 version: '3.1'
 
 services:
