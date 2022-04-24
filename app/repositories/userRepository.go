@@ -6,6 +6,10 @@ import (
 	"gorm.io/gorm"
 )
 
+type UserRepositoryInterface interface {
+	GetUser(int) (models.User, error)
+}
+
 type UserRepository struct {
 	conn *gorm.DB
 }

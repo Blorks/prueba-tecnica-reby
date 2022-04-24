@@ -7,7 +7,7 @@ type User struct {
 	Balance int
 }
 
-func (user *User) Constructor(name string, email string, balance int) {
+func (user *User) Constructor(IdUser int, name string, email string, balance int) {
 	user.Name = name
 	user.Email = email
 	user.Balance = balance

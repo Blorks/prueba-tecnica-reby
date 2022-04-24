@@ -12,12 +12,12 @@ const unlock_price int = 100
 const minute_price int = 18
 
 type RideService struct {
-	userRepository    repositories.UserRepository
+	userRepository    repositories.UserRepositoryInterface
 	vehicleRepository repositories.VehicleRepository
 	rideRepository    repositories.RideRepository
 }
 
-func NewRideService(userRepository repositories.UserRepository, vehicleRepository repositories.VehicleRepository, rideRepository repositories.RideRepository) *RideService {
+func NewRideService(userRepository repositories.UserRepositoryInterface, vehicleRepository repositories.VehicleRepository, rideRepository repositories.RideRepository) *RideService {
 	return &RideService{userRepository: userRepository, vehicleRepository: vehicleRepository, rideRepository: rideRepository}
 }
 
