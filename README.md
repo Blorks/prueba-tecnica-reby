@@ -76,7 +76,7 @@ La conexión a esta base de datos es la siguiente:
 **_NOTE:_** Para que los tests se ejecuten correctamente, hay que crear manualmente una base de datos llamada "prueba-tecnica-reby"
 
 docker-compose:
-<code>
+```
 version: '3.1'
 
 services:
@@ -93,7 +93,7 @@ services:
     restart: always
     ports:
       - 3333:3306
-</code>
+```
 
 En cuanto a los tests unitarios, no he conseguido hacerlos debido a mi falta de experiencia con el lenguaje (en la sección de Problemas y soluciones lo explico un poco más), aunque comento de todas formas el concepto de mi idea inicial:
 
