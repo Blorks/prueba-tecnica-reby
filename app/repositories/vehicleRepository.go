@@ -14,6 +14,9 @@ func NewVehicleRepository(conn *gorm.DB) *VehicleRepository {
 	return &VehicleRepository{conn: conn}
 }
 
+/**
+Get from the database the vehicle whose primary key matches the id passed as a parameter
+*/
 func (r *VehicleRepository) GetVehicle(idVehicle int) (models.Vehicle, error) {
 	var vehicle models.Vehicle
 
