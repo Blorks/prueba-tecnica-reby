@@ -21,6 +21,13 @@ func NewRideService(userRepository repositories.UserRepository, vehicleRepositor
 	return &RideService{userRepository: userRepository, vehicleRepository: vehicleRepository, rideRepository: rideRepository}
 }
 
+/**
+Calculate the cost of a ride based on the following formula:
+
+cost = unlock_price + minutes*minute_price
+
+- If the ride for which you want to calculate the cost has not finished yet, return an error
+*/
 func calculateCost(ride models.Ride) int {
 	if ride.Finished.IsZero() {
 		panic("It is not possible to calculate the cost of a ride that has not yet finished")
@@ -32,6 +39,14 @@ func calculateCost(ride models.Ride) int {
 	return unlock_price + minutes*minute_price
 }
 
+/**
+Create a ride
+
+- If the user does not have enough balance to start the ride, return an error
+- If the vehicle you want to use is already in use, it returns an error
+
+Returns an object with the information of the inserted Ride
+*/
 func (s *RideService) InitRide(rideDto dtos.RideDtoPost) dtos.RideDtoGet {
 	user, _ := s.userRepository.GetUser(rideDto.IdUser)
 	vehicle, _ := s.vehicleRepository.GetVehicle(rideDto.IdVehicle)
@@ -55,6 +70,13 @@ func (s *RideService) InitRide(rideDto dtos.RideDtoPost) dtos.RideDtoGet {
 	return response
 }
 
+/**
+Finish a ride
+
+- If the Ride you want to finish is already finished, it returns an error
+
+Returns an object with the information of the finished Ride and his cost
+*/
 func (s *RideService) FinishRide(idRide int) dtos.RideDtoGetCost {
 	ride, _ := s.rideRepository.GetRide(idRide)
 

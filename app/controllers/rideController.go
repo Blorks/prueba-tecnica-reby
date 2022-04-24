@@ -22,12 +22,11 @@ func NewRideController(rideService services.RideService) *RideController {
 func (c *RideController) RideStartHandler(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if err := recover(); err != nil {
+			w.WriteHeader(http.StatusForbidden)
+
 			fmt.Fprintln(w, err)
 		}
 	}()
-
-	w.WriteHeader(http.StatusCreated)
-	w.Header().Set("Content-Type", "application/json")
 
 	rideDto := dtos.RideDtoPost{}
 	decoder := json.NewDecoder(r.Body)
@@ -37,6 +36,9 @@ func (c *RideController) RideStartHandler(w http.ResponseWriter, r *http.Request
 	} else {
 		rideDtoGet := c.rideService.InitRide(rideDto)
 
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+
 		response, _ := json.Marshal(rideDtoGet)
 		fmt.Fprintln(w, string(response))
 	}
@@ -45,6 +47,8 @@ func (c *RideController) RideStartHandler(w http.ResponseWriter, r *http.Request
 func (c *RideController) RideFinishHandler(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if err := recover(); err != nil {
+			w.WriteHeader(http.StatusForbidden)
+
 			fmt.Fprintln(w, err)
 		}
 	}()
