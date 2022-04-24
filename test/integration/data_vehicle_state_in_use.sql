@@ -1,0 +1,1 @@
+UPDATE vehicles SET state = 'in_use'

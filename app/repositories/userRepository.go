@@ -14,6 +14,9 @@ func NewUserRepository(conn *gorm.DB) *UserRepository {
 	return &UserRepository{conn: conn}
 }
 
+/**
+Get from the database the user whose primary key matches the id passed as a parameter
+*/
 func (r *UserRepository) GetUser(idUser int) (models.User, error) {
 	var user models.User
 
